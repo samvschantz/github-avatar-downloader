@@ -9,24 +9,31 @@ function getRepoContributors(repoOwner, repoName, cb) {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
       'User-Agent': 'request',
-      'Authorization': secret
+      'Authorization': secret.GITHUB_TOKEN
     }
   };
 
   request(options, function(err, res, body) {
-    cb(err, JSON.parse(body));
+    var parsedJSON = JSON.parse(body)
+    cb(err, parsedJSON);
+    parsedJSON.forEach(function(element){
+      var filePath = element['login']
+      var url = element['avatar_url']
+      var position = parsedJSON.indexOf(element) + 1
+      downloadImageByURL(url, filePath, position)
+    })
   });
 }
 
-function downloadImageByURL(url, filePath) {
+function downloadImageByURL(url, filePath, position) {
   request.get(url + filePath)
     .on('error', function (err) {
       throw err;
     })
     .on('response', function (response) {
-      console.log('Response Status Code: ', response.statusCode + '\n' + 'Downloading...');
+      console.log('Downloading image #' + position);
     })
-    .pipe(fs.createWriteStream('./githubAvatars'))
+    .pipe(fs.createWriteStream('githubAvatars/' + filePath))
 }
 
 getRepoContributors("jquery", "jquery", function(err, result) {
@@ -34,4 +41,4 @@ getRepoContributors("jquery", "jquery", function(err, result) {
   console.log("Result:", result);
 });
 
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "avatars/kvirani.jpg")
+
