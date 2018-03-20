@@ -1,3 +1,6 @@
+var owner = process.argv[2]
+var repo = process.argv[3]
+
 var request = require('request');
 var secret = require('./secrets');
 var fs = require('fs');
@@ -36,9 +39,15 @@ function downloadImageByURL(url, filePath, position) {
     .pipe(fs.createWriteStream('githubAvatars/' + filePath))
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(owner, repo, function(err, result) {
+  if (!owner){
+    throw new Error('ERROR: Please enter an owner and a repo in the format: node download_avatars.js <owner> <repo>')
+  } else if (!repo){
+    throw new Error('ERROR: Please enter an owner and a repo in the format: node download_avatars.js <owner> <repo>')
+  } else if (owner, repo){
   console.log("Errors:", err);
   console.log("Result:", result);
+  }
 });
 
 
