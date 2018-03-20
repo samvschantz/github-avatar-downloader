@@ -1,5 +1,9 @@
 secrets.js
 
+avatars/*.jpg
+
+githubAvatars/*.jpg
+
 # Logs
 logs
 *.log
